@@ -196,7 +196,7 @@ genkernel:
     # Log output file
     logfile: "/var/log/genkernel.log"
     # Debug Level
-    loglevel=1
+    loglevel: "1"
 
     # =========COMPILED UTILS CONFIGURATION============
     #
