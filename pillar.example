@@ -108,7 +108,7 @@ genkernel:
     # Use this splash theme. If commented out - the "default" name theme is used.
     # Also, SPLASH: "yes" needs to be enabled for this one to one work.
     # This supersedes the "SPLASH_THEME" option of /etc/conf.d/splash (in early space).
-    splash_theme: "black-spin"
+    splash_theme: "livedvd-12.0"
 
     # Run the specified command in the current environment after the kernel and
     # modules have been compiled, useful to rebuild external kernel module
