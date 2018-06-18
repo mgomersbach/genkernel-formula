@@ -4,6 +4,7 @@ genkernel-config:
   file.managed:
     - name: {{ genkernel.configfile }}
     - source: salt://genkernel/files/genkernel.conf.jinja
+    - template: jinja
     - mode: 644
     - user: root
     - group: root
