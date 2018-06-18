@@ -1,0 +1,3 @@
+{% for option, value in salt['pillar.get']('genkernel:config', {}).items() -%}
+{{ option.upper() }}="{{ value }}"
+{% endfor %}

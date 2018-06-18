@@ -1,0 +1,4 @@
+genkernel:
+  config:
+    - install: yes
+    - oldconfig: no

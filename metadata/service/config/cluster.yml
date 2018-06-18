@@ -1,0 +1,10 @@
+applications:
+- genkernel
+classes:
+- service.genkernel.support
+parameters:
+  genkernel:
+    config:
+      enabled: true
+      bind:
+        address: 0.0.0.0
