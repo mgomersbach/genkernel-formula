@@ -1,0 +1,3 @@
+genkernel:
+  pkg: sys-kernel/genkernel
+  configfile: '/etc/genkernel'
