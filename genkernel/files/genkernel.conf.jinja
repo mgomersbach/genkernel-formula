@@ -1,5 +1,8 @@
 # Do not modify, this file is managed from Salt
 
-{% for option, value in salt['pillar.get']('genkernel:config', {}).items() -%}
-{{ option.upper() }}="{{ value }}"
-{% endfor %}
+{% for item in salt['pillar.get']('genkernel:config', {}) -%}
+{% for key in item -%}
+{{ key.upper() }}="{{ item[key] }}"
+{% endfor -%}
+{% endfor -%}
+
