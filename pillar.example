@@ -1,32 +1,40 @@
 genkernel:
   config:
+    # =========Common Command Line Option Defaults=========
+
     # Should we install to $BOOTDIR?  Default is "no" because genkernel is used in
     # catalyst and stage building.
-    - install: "yes"
+    # - install: "yes"
 
     # Run 'make oldconfig' before compiling this kernel?
-    - oldconfig: "no"
+    - oldconfig: "yes"
 
     # Run 'make menuconfig' before compiling this kernel?
     - menuconfig: "no"
-
+    # Run 'make gconfig' before compiling this kernel?
+    - gconfig: "no"
     # Run 'make nconfig' (ncurses 'menuconfig') before compiling this kernel?
     - nconfig: "no"
+    # Run 'make xconfig' before compiling this kernel?
+    - xconfig: "no"
 
     # Run 'make clean' before compilation?
-    - clean: "no"
+    # If set to NO, implies MRPROPER WILL NOT be run
+    # Also, if clean is NO, it won't copy over any configuration
+    # file, it will use what's there.
+    - clean: "yes"
 
     # Run 'make mrproper' before configuration/compilation?
-    - mrproper: "no"
+    - mrproper: "yes"
 
     # Override the arch detection?
-    #- arch_override: "x86"
+    # - arch_override: "x86"
 
     # Mount BOOTDIR automatically if it isn't mounted?
     - mountboot: "yes"
 
     # Make symlinks in BOOTDIR automatically?
-    #- symlink: "no"
+    # - symlink: "no"
 
     # Save the new configuration in /etc/kernels upon
     # successfull compilation
@@ -36,121 +44,159 @@ genkernel:
     - usecolor: "yes"
 
     # Clear build cache dir
-    #- clear_cache_dir: "yes"
+    # - clear_cache_dir: "yes"
 
     # Clear all tmp files and caches after genkernel has run
-    #- postclear: "1"
+    # - postclear: "1"
 
     # Genkernel uses an independent configuration for MAKEOPTS, and does not source
     # /etc/make.conf . You can override the default setting by uncommenting and
     # tweaking the following line. Default setting is set up by
     # ${GK_SHARE}/${ARCH_OVERRIDE}/config.sh . The recommended value for -j
     # argument is: <number of processors>*<number of cores per processor>+1
-    - makeopts: "$(portageq envvar MAKEOPTS)"
+    # - makeopts: "$(portageq envvar MAKEOPTS)"
+
+    # Run the kernel make at the following NICE level.  Default is 10.
+    # NICE=10
 
     # Add in LVM support from static binaries if they exist on the system, or
     # compile static LVM binaries if static ones do not exist.
-    #- lvm: "no"
+    # - lvm: "no"
 
     # Add in Luks support. Needs sys-fs/cryptsetup with -dynamic installed.
-    #- luks: "no"
+    # - luks: "no"
 
     # Add in GnuPG support
-    #- gpg: "no"
+    # - gpg: "no"
+
+    # Add in early microcode support
+    # - microcode: "no"
+
+    # Add in NFS support
+    # - nfs: "no"
 
     # Add DMRAID support.
-    #- dmraid: "no"
+    # - dmraid: "no"
+
+    # Add SSH support.
+    # - ssh: "no"
 
     # Include (or suppresses the inclusion of) busybox in the initrd or initramfs.
     # If included, busybox is rebuilt if the cached copy is out of date.
-    #- busybox: "yes"
-
-    # Use udev instead of mdev as the default device manager for the initramfs.
-    # If you use systemd and perhaps lvm, you _must_ keep this turned on.
-    - udev: "yes"
+    # - busybox: "yes"
 
     # Includes mdadm/mdmon binaries in initramfs.
     # Without sys-fs/mdadm[static] installed, this will build a static mdadm.
-    #- mdadm: "no"
+    # - mdadm: "no"
 
     # Specify a custom mdadm.conf.
     # By default the ramdisk will be built *without* an mdadm.conf and will auto-detect
     # arrays during bootup.  Usually, this should not be needed.
-    #- mdadm_config: "/etc/mdadm.conf"
+    # - mdadm_config: "/etc/mdadm.conf"
 
     # Add Multipath support.
-    #- multipath: "no"
+    # - multipath: "no"
 
     # Add iSCSI support.
-    #- iscsi: "no"
+    # - iscsi: "no"
 
     # Add e2fsprogs support.
-    #- e2fsprogs: "no"
+    # - e2fsprogs: "no"
+
+    # Include support for unionfs
+    # - unionfs: "1"
+
+    # Include support for zfs volume management.
+    # - zfs: "no"
+
+    # Add BTRFS support.
+    # - btrfs: "no"
+
+    # Install firmware onto root filesystem
+    # Will conflict with sys-kernel/linux-firmware package
+    # - firmware_install: "no"
 
     # Enable copying of firmware into initramfs
-    - firmware: "yes"
+    # - firmware: "no"
     # Specify directory to pull from
-    - firmware_src: "/lib/firmware/host"
-    # Specify specific firmware files to include. This overrides FIRMWARE_DIR
-    #- firmware_files: ""
+    # - firmware_dir: "/lib/firmware"
+    # Specify specific firmware files to include. This overrides firmware_dir
+    # - firmware_files: ""
+
+    # Enable disklabel support (copies blkid to initrd)
+    - disklabel: "yes"
 
     # Add new kernel to grub?
-    #- bootloader: "grub"
+    # - bootloader: "grub"
 
     # Enable splashutils in early space (initrd). Default is "no".
-    - splash: "no"
+    # - splash: "yes"
 
     # Use this splash theme. If commented out - the "default" name theme is used.
-    # Also, SPLASH: "yes" needs to be enabled for this one to one work.
+    # Also, splash: "yes" needs to be enabled for this one to one work.
     # This supersedes the "SPLASH_THEME" option of /etc/conf.d/splash (in early space).
-    #- splash_theme: "livedvd-12.0"
+    # - splash_theme: "gentoo"
 
-    # Installs, or not, plymouth into the initramfs. If "splash" will be
-    # passed at boot, plymouth will be activated.
-    - plymouth: "yes"
-
-    # Embeds the given plymouth theme into the initramfs.
-    - plymouth_theme: "spinfinity"
+    # Run the specified command in the current environment after the kernel and
+    # modules have been compiled, useful to rebuild external kernel module
+    # (use "emerge --quiet @module-rebuild" for >=portage-2.2) or installing additional
+    # files (use 'copy_image_with_preserve dtb path/to/dtb dtb ${KNAME}-${ARCH}-${KV}')
+    # - cmd_callback: ""
 
     # =========Keymap Settings=========
     #
     # Force keymap selection at boot
-    #- dokeymapauto: "yes"
+    # - dokeymapauto: "yes"
 
     # Disables keymap selection support
-    #- keymap: "0"
+    # - keymap: "0"
 
     # =========Low Level Compile Settings=========
     #
     # GNU Make to use for kernel.  See also the --kernel-make command line option.
-    #- kernel_make: "make"
+    # - kernel_make: "make"
 
     # Compiler to use for the kernel (e.g. distcc).  See also the --kernel-cc
     # command line option.
-    #- kernel_cc: "gcc"
+    # - kernel_cc: "gcc"
 
     # Assembler to use for the kernel.  See also the --kernel-as command line
     # option.
-    #- kernel_as: "as"
+    # - kernel_as: "as"
 
     # Linker to use for the kernel.  See also the --kernel-ld command line option.
-    #- kernel_ld: "ld"
+    # - kernel_ld: "ld"
 
     # GNU Make to use for the utilities.  See also the --utils-make command line
     # option.
-    #- utils_make: "make"
+    # - utils_make: "make"
 
     # Compiler to use for the utilities (e.g. distcc).  See also the --utils-cc
     # command line option.
-    #- utils_cc: "gcc"
+    # - utils_cc: "gcc"
 
     # Assembler to use for the utilities.  See also the --utils-as command line
     # option.
-    #- utils_as: "as"
+    # - utils_as: "as"
 
     # Linker to use for the utilities.  See also the --utils-ld command line
     # option.
-    #- utils_ld: "ld"
+    # - utils_ld: "ld"
+
+    # Common prefix of cros compile commands
+    # - utils_cross_compile: "x86_64-pc-linux-gnu"
+
+    # Value of CROSS_COMPILE utils variable
+    # during kernel compilation
+    # - kernel_cross_compile: "x86_64-pc-linux-gnu"
+
+    # Override default make target (bzImage). See also the --kernel-target
+    # command line option. Useful to build a uImage on arm
+    # - kernel_make_directive_override: "fooImage"
+
+    # Override default kernel binary path. See also the --kernel-binary
+    # command line option. Useful to install a uImage on arm
+    # - kernel_binary_override: "arch/foo/boot/bar"
 
     # =========GENKERNEL LOCATION CONFIGURATION============
     # Variables:
@@ -158,10 +204,10 @@ genkernel:
     #   %%CACHE%% - Final determined cache location
 
     # Set genkernel's temporary work directory.  Default is /var/tmp/genkernel
-    #- tmpdir: "/var/tmp/genkernel"
+    # - tmpdir: "/var/tmp/genkernel"
 
     # Set the boot directory, default is /boot
-    #- bootdir: "/boot"
+    # - bootdir: "/boot"
 
     # Default share directory location
     - gk_share: "${GK_SHARE:-/usr/share/genkernel}"
@@ -169,11 +215,11 @@ genkernel:
     # Location of the default cache
     - cache_dir: "/var/cache/genkernel"
     # Location of DISTDIR, where our source tarballs are stored
-    - distdir: "/var/lib/genkernel/src"
+    - distdir: "${GK_SHARE}/distfiles"
     # Log output file
     - logfile: "/var/log/genkernel.log"
     # Debug Level
-    - loglevel: "1"
+    - loglevel=1
 
     # =========COMPILED UTILS CONFIGURATION============
     #
@@ -181,11 +227,11 @@ genkernel:
     - default_kernel_source: "/usr/src/linux"
     # Default kernel config (only use to override using
     # arch/%%ARCH%%/kernel-config-${VER}.${PAT} !)
-    #- default_kernel_config: "${GK_SHARE}/arch/%%ARCH%%/kernel-config"
+    # - default_kernel_config: "${GK_SHARE}/arch/%%ARCH%%/kernel-config"
 
     # Specifies a user created busybox config
-    #- busybox_config: "/path/to/file"
-    #- busybox_applets: "[ ash sh mount uname echo cut cat"
+    # - busybox_config: "/path/to/file"
+    # - busybox_applets: "[ ash sh mount uname echo cut cat"
 
     # NOTE: Since genkernel 3.4.41 the version of
     #   busybox, lvm, mdadm, .. have been moved to
@@ -198,72 +244,86 @@ genkernel:
     # Tag the kernel and ramdisk with a name:
     # If not defined the option defaults to
     # 'genkernel'
-    #- kname: "genkernel"
-
-    # Append a text to the kernel/initrd's name,
-    # usefull to add a unique key like the actual date
-    #- kappendname: "-$(date +%Y%m%d-%H%M%S)"
+    # - kname: "genkernel"
 
     # This option is only valid if kerncache is
     # defined. If there is a valid kerncache no checks
     # will be made against a kernel source tree
-    #- kernel_sources: "0"
+    # - kernel_sources: "0"
 
     # Build a static (monolithic kernel)
-    #- build_static: "1"
+    # - build_static: "1"
 
     # Make and install kernelz image (PowerPC)
-    #- genzimage: "1"
+    # - genzimage: "1"
 
     # File to output a .tar.bz2'd kernel contents
     # of /lib/modules/ and the kernel config
     # NOTE: This is created before the callbacks
     # are run!
-    #- kerncache: "/path/to/file"
+    # - kerncache: "/path/to/file"
 
     # Prefix to kernel module destination, modules
     # will be installed in <prefix>/lib/modules
     # (.conf equivalent of --module-prefix=<dir>)
-    #- install_mod_path: ""
+    # - install_mod_path: ""
 
     # =========MISC INITRD CONFIGURATION============
     #
     # Copy all kernel modules to the ramdisk
-    #- allramdiskmodules: "1"
+    # - allramdiskmodules: "1"
 
     # Don't copy any modules to the ramdisk
-    #- ramdiskmodules: "0"
+    # - ramdiskmodules: "0"
 
     # File to output a .tar.bz2'd kernel and ramdisk:
     # No modules outside of the ramdisk will be
     # included...
-    #- minkernpackage: "/path/to/file.bz2"
+    # - minkernpackage: "/path/to/file.bz2"
+
+    # Add additional modules to the ramdisk using the module groups defined
+    # in /usr/share/genkernel/default/modules_load (see this file for
+    # more details).  This would be used if, for example, you
+    # required an additional crypto module or network device at boot
+    # time and did not want to staticly compile these in the kernel.
+    # Options take the form AMODULES_{group} where {group} is one of
+    # the groups in modules_load (which are in the form MODULES_{group}).
+    # Use this with caution.
+    # - AMODULES_group: "module-to-include another-module"
+
+    # Override the default modules in the ramdisk, for a given group, as defined by
+    # /usr/share/genkernel/default/modules_load and the per-arch modules_load
+    # files. You PROBABLY want to use AMODULES_* above, and NOT MODULES_* here.
+    # If you use MODULES_* here, the default and per-arch modules will NOT be used.
+    # - MODULES_group1: "some-module"
+    # - MODULES_group2: ""     # Load no modules for this group
 
     # File to output a .tar.bz2'd modules after the
     # callbacks have run
-    #- modulespackage: "/path/to/file.bz2"
+    # - modulespackage: "/path/to/file.bz2"
 
     # Directory structure to include in the initramfs,
     # only available on >=2.6 kernels
-    #- initramfs_overlay: ""
+    # - initramfs_overlay: ""
 
     # Build the generated initramfs into the kernel instead of
     # keeping it as a separate file
-    - integrated_initramfs: "1"
+    # - integrated_initramfs: "1"
 
     # Compress generated initramfs
-    - compress_initrd: "yes"
-
+    # - compress_initrd: "yes"
     # Types of compression: best, xz, lzma, bzip2, gzip, lzop, fastest
-    - compress_initrd_type: "lzop"
+    # "best" selects the best available compression method
+    # "fastest" selects the fastest available compression method
+    # - compress_initrd_type: "best"
 
     # wrap initramfs using mkimage for u-boot bootloader
-    #- wrap_initrd: "no"
+    # - wrap_initrd: "no"
 
     # Create a self-contained env in the initramfs
-    #- netboot: "1"
+    # - netboot: "1"
 
     # =========MISC BOOT CONFIGURATION============
     #
     # Specify a default for real_root=
-    #- real_root: "/dev/one/two/gentoo"
+    # - real_root: "/dev/one/two/gentoo"
